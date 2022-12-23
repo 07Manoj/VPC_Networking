@@ -26,9 +26,9 @@ Create 3 virtual machines and attach the network interfaces as follows to create
 
 **VIrtual Machine -1 (IGW):** The main Internet Gateway router or it can also be termed as the edge router. This is where the traffic comes in from outside and the traffic from internal network goes out. The availability zones would be connected to the IGW_Gateway which makes the availability zones directly connected networks to the IGW. We need two interfaces on this router. The first network interface would be a bridged network while the other one would be a virtual interface which acts as IGW_Gateway.
 
-**VIrtual Machine -2 (AV1):** This will be the first availability zone. Create a pfsense virtual machine and attach the networks IGW_Gateway, AV1_PUB,AV1_PRIV to the machine. We are going to configure these virtual interfaces to solve for certain network functionalities.
+**VIrtual Machine -2 (AV1):** This will be the first availability zone. Create a pfsense virtual machine and attach the networks *IGW_Gateway, AV1_PUB,AV1_PRIV* to the machine. We are going to configure these virtual interfaces to solve for certain network functionalities.
 
-**VIrtual Machine -3 (AV2):** This will be the second availability zone. Create a pfsense virtual machine and attach the networks IGW_Gateway, AV2_PUB,AV2_PRIV to the machine.
+**VIrtual Machine -3 (AV2):** This will be the second availability zone. Create a pfsense virtual machine and attach the networks *IGW_Gateway, AV2_PUB,AV2_PRIV* to the machine.
 
 We are going to configure this in a top-down approach which means that we are going to configure the IGW router first and then configure the availability zones.
 
@@ -42,8 +42,11 @@ We are going to configure this in a top-down approach which means that we are go
 * From the pfsense console, grab the IP address of the WAN interface and enter it into the browser which gives you the access to the pfsense web console which is where you can make changes.
 * Post entering the default credentials, it redirects you to a setup page where you can configure the IP addresses of the interfaces. It should show up a WAN interface and the data should be auto populated since pfsense already has a WAN address and if it does not, follow the next step
 * Configure WAN on the IGW pfSense using DHCP to get an IP from the school. Unchecked "Reserved Networks options". We would get an IP from the Cyber Range LAN which is a 192.168.0.0/21 network.
+  
 ![WAN](Images/3.png)
+
 * Configure LAN (IGW Gateway) - Setup a static IPv4 with IPv6 disabled. The network it is on is 10.5.5.0/24. The IP of the interface is 10.5.5.1 and it is also the gateway. The IPv4  upstream gateway should be set to none.
+  
  ![LAN](Images/4.png)
 
 ### **STEP-3A:**  Configuring DHCP on IGW
@@ -71,7 +74,7 @@ We are going to configure this in a top-down approach which means that we are go
 
 ### **STEP-4A:**  Configuring DHCP on AV1
 
-* Configure DHCP on LAN and OPT1 interfaces by navigating to Services > DHCP Server. Enable the DHCP on the interfaces and leave the IP range as is. The Gateways would be 10.1.1.1 and 10.1.2.1 respectively.
+* Configure DHCP on LAN and OPT1 interfaces by navigating to ***Services > DHCP Server***. Enable the DHCP on the interfaces and leave the IP range as is. The Gateways would be 10.1.1.1 and 10.1.2.1 respectively.
   
 ![DHCP](Images/AV1_DHCP_LAN.png)
 ![DHCP](Images/AV1_DHCP_LAN1.png)
@@ -99,7 +102,7 @@ school. The gateway in this case is 192.168.7.254.
 
 ### **STEP-6:** Configuring Firewall on IGW
 
-* Navigate to Firewall > Rules > WAN
+* Navigate to ***Firewall > Rules > WAN***
 * Add an rule which allows all protocols from the source WAN_net to any destination.
 * Add two new rules that allows incoming request to IGW_Gateway network and the WAN network.
 
@@ -111,7 +114,7 @@ school. The gateway in this case is 192.168.7.254.
 
 ### **STEP-7:** Routing on Availability Zone - 1
 
-* Navigate to System > Routing > Static Routes.
+* Navigate to ***System > Routing > Static Routes***.
 * Add a new static route to a 0.0.0.0/1 network which essentially means any IP address and any subnet mask.
 * Select the interface as WAN and the gateway to be the DHCP Gateway which in this case is 10.5.5.1. This is the gateway that we have specified while configuring the DHCP server on the IGW_Gateway.
 * Save the settings and we now have a route to the internet via the IGW. Any network packet that is going out of the WAN interface will be forwarded to 10.5.5.1 as we have specified in the static route.
@@ -120,13 +123,46 @@ school. The gateway in this case is 192.168.7.254.
 
 ### **STEP-8:** Firewall on Availability Zone - 1
 
-* Navigate to Firewall > Rules > WAN
+* Navigate to ***Firewall > Rules > WAN***
 * You can add lenient rules here since this is going to be an internal network and the IGW does all the filtering initially and hence add an "any any" rule on the WAN and AV1_PUB that passes all the traffic.
   
 ![Firewall_AV1](Images/Firewall_AV1.png)
 ![Firewall_AV1](Images/Firewall_AV1.1.png)
 
 * On AV1_PRIV, add a rule that passes incoming data from AV1_Pub network since we want the private subnet to be isolated from the outside.
+  
  ![Firewall_AV1-PRIV](Images/Firewall_AV1Priv.png)
 
 *Note:* The setup for Availability Zone - 2 would be similar to what has been for Availability Zone -1 except for changes in IP addresses.
+
+### **STEP-9:** DNS Configuration  on IGW
+
+* In order to configure DNS for our networks, we would need DNS servers and hence we are using external DNS servers including the in-house DNS server.
+* Navigate to ***System > General Setup > DNS Server Settings*** and enter the external DNS server addresses as below.
+ ![DNS_IGW](Images/DNS_IGW.png)
+
+* We have specified DNS servers that the pfSense  system uses to resolve DNS requests. However, we need to configure the pfsense to use these servers we have specified and to do that, we navigate to ***Services > DNS Resolver***.
+
+* Enable the DNS Resolver and scroll down to select **"Enable Forwarding Mode"** under DNS Query Forwarding.  This is the configuration change that enables pfsense to use the external DNS servers that we have already specified under General Settings.
+  
+ ![DNS_IGW](Images/DNS_IGW1.png)
+
+* If you are looking at resolving internal hostnames, select the options as below.
+  
+ ![DNS_IGW](Images/DNS_IGW2.png)
+
+* Save the DNS Resolver settings and your networks should be able to resolve hostnames
+* Navigate to ***Diagnostics > Ping*** and ping any hostname that you would like to resolve.
+  
+![DNS_IGW](Images/DNS_IGW3.png)
+
+### **STEP-10:** DNS on Availability Zone - 1
+
+* To solve for DNS on this zone, the idea is to forward the DNS requests to the IGW_Gateway and the IGW router will handle the resolution of DNS requests.
+* List the IP address of the IGW_Gateway which is 10.5.5.1 in the System > General Setup > DNS Server Settings field
+* ***Navigate to Services > DNS Resolver*** and disable the DNS resolver. We can directly use the DNS Forwarder to forward the requests to 10.5.5.1.
+ ![DNS_AV1](Images/DNS_AV1.png)
+
+* Navigate to Diagnostics > Ping and ping any hostname that you would like to resolve.
+
+ ![DNS_AV1](Images/DNS_AV.png)
