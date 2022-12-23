@@ -1,4 +1,5 @@
 # **Virtual Private Cloud Networking on PfSense**
+
 ## **SCENARIO**
 
 You need to set up a isolated infrastructure similar to that of a AWS VPC with multiple availability zones that should be able to communicate with one another  There should be a public and private subnet in each of the availability zone. The devices in the publicly and private subnets of their respective zones should be able to communicate with one another. Each zone should route through one ingress/egress point, additionally basic firewalls should be implemented throughout the system. For this exercise a minimum of 2 availability zones should be implemented to demonstrate functionality. Any additional zones are repetitive and do not add much for the additional complexity.
@@ -87,7 +88,7 @@ We now have IP addresses configured for network interfaces and a DHCP server whi
 ### **STEP-5:**  Configuring Routing on IGW
 
 * Navigate to ***System > Routing > Static Routes***
-* Add a new static route to a 0.0.0.0/1 network which essentially means any IP address and any subnet mask. 
+* Add a new static route to a 0.0.0.0/1 network which essentially means any IP address and any subnet mask.
 * Select the interface as WAN and the gateway to be the DHCP Gateway.
 * Save the settings and we now have a static route to anywhere on the internet.
 
@@ -111,9 +112,9 @@ school. The gateway in this case is 192.168.7.254.
 ### **STEP-7:** Routing on Availability Zone - 1
 
 * Navigate to System > Routing > Static Routes.
-* Add a new static route to a 0.0.0.0/1 network which essentially means any IP address and any subnet mask. 
+* Add a new static route to a 0.0.0.0/1 network which essentially means any IP address and any subnet mask.
 * Select the interface as WAN and the gateway to be the DHCP Gateway which in this case is 10.5.5.1. This is the gateway that we have specified while configuring the DHCP server on the IGW_Gateway.
-* Save the settings and we now have a route to the internet via the IGW. Any network packet that is going out of the WAN interface will be forwarded to 10.5.5.1 as we have specified in the static route. 
+* Save the settings and we now have a route to the internet via the IGW. Any network packet that is going out of the WAN interface will be forwarded to 10.5.5.1 as we have specified in the static route.
 
 ![Routing_AV1](Images/Routing_AV1.png)
 
@@ -129,4 +130,3 @@ school. The gateway in this case is 192.168.7.254.
  ![Firewall_AV1-PRIV](Images/Firewall_AV1Priv.png)
 
 *Note:* The setup for Availability Zone - 2 would be similar to what has been for Availability Zone -1 except for changes in IP addresses.
-
