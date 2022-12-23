@@ -1,4 +1,3 @@
-
 <link href="stylesheet.css" rel="stylesheet"> </link>
 
 # **Virtual Private Cloud Networking on PfSense**
