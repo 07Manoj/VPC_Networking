@@ -1,3 +1,6 @@
+
+<link href="stylesheet.css" rel="stylesheet"> </link>
+
 # **Virtual Private Cloud Networking on PfSense**
 
 ## **SCENARIO**
@@ -8,7 +11,7 @@ You need to set up a isolated infrastructure similar to that of a AWS VPC with m
 
 To solve the above task, we are going to have multiple network interfaces as shown in the figure below. The IGW pfSense will be the primary pfsense since it handles perimeter firewall, DNS and the routing of packets.
 
-![Solution](Images/CCDC_Practice_Scenario_1.png)
+![Solution](Images/CCDC_Practice_Scenario_1.png)  
 
 ### **STEP-1:** Creating Virtual Interfaces
 
@@ -161,8 +164,11 @@ school. The gateway in this case is 192.168.7.254.
 * To solve for DNS on this zone, the idea is to forward the DNS requests to the IGW_Gateway and the IGW router will handle the resolution of DNS requests.
 * List the IP address of the IGW_Gateway which is 10.5.5.1 in the System > General Setup > DNS Server Settings field
 * ***Navigate to Services > DNS Resolver*** and disable the DNS resolver. We can directly use the DNS Forwarder to forward the requests to 10.5.5.1.
+  
  ![DNS_AV1](Images/DNS_AV1.png)
 
 * Navigate to Diagnostics > Ping and ping any hostname that you would like to resolve.
 
  ![DNS_AV1](Images/DNS_AV.png)
+
+The above guide helps replicate a Virtual Private Cloud like networking architecture using PfSense. The firewall rules and IP addresses can be modified as deemed fit.
