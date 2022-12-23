@@ -120,3 +120,5 @@ school. The gateway in this case is 192.168.7.254.
 
 * Navigate to Firewall > Rules > WAN
 * You can add lenient rules here since this is going to be an internal network and the IGW does all the filtering initially and hence add an "any any" rule on the WAN and AV1_PUB that passes all the traffic.
+![Firewall_AV1](Images/Firewall_AV1.png)
+![Firewall_AV1](Images/Firewall_AV1.1.png)
