@@ -1,3 +1,4 @@
+# **Virtual Private Cloud Networking on PfSense**
 ## **SCENARIO**
 
 You need to set up a isolated infrastructure similar to that of a AWS VPC with multiple availability zones that should be able to communicate with one another  There should be a public and private subnet in each of the availability zone. The devices in the publicly and private subnets of their respective zones should be able to communicate with one another. Each zone should route through one ingress/egress point, additionally basic firewalls should be implemented throughout the system. For this exercise a minimum of 2 availability zones should be implemented to demonstrate functionality. Any additional zones are repetitive and do not add much for the additional complexity.
@@ -60,7 +61,7 @@ We are going to configure this in a top-down approach which means that we are go
 * Configure the LAN as AV1_PUB and assign it an IP address of 10.1.1.1. The CIDR would be 10.1.1.0/24.
   
 ![IP_LAN](Images/AV1_LAN.png)
-![IP_LAN](Images/AV1_LAN1.png)
+![IP_LAN](Images/AV1_Lan1.png)
 
 * Configure OPT1 as AV1_PRIV and assign it an IP address of 10.1.2.1. The CIDR would be 10.1.2.0/24.
 
@@ -120,5 +121,12 @@ school. The gateway in this case is 192.168.7.254.
 
 * Navigate to Firewall > Rules > WAN
 * You can add lenient rules here since this is going to be an internal network and the IGW does all the filtering initially and hence add an "any any" rule on the WAN and AV1_PUB that passes all the traffic.
+  
 ![Firewall_AV1](Images/Firewall_AV1.png)
 ![Firewall_AV1](Images/Firewall_AV1.1.png)
+
+* On AV1_PRIV, add a rule that passes incoming data from AV1_Pub network since we want the private subnet to be isolated from the outside.
+ ![Firewall_AV1-PRIV](Images/Firewall_AV1Priv.png)
+
+*Note:* The setup for Availability Zone - 2 would be similar to what has been for Availability Zone -1 except for changes in IP addresses.
+
